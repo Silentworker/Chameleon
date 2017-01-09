@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Assets.Script
+namespace Assets.Script.PlayGround
 {
-    public class PlayGround : MonoBehaviour
+    public class PlayGroundController : MonoBehaviour, IPlayGroundController
     {
         public ConstantSpeedMoving Clouds;
         public ConstantSpeedMoving Water;

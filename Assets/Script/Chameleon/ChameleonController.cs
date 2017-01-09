@@ -21,8 +21,8 @@ namespace Assets.Script.Chameleon
 
         public void Attack(float angle)
         {
-            Head.SetTrigger("Attack");
             Head.SetFloat("AttackAngle", angle);
+            Head.SetTrigger("Attack");
             Body.SetTrigger("Attack");
         }
     }

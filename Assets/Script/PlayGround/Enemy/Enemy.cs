@@ -68,7 +68,7 @@ namespace Assets.Script.PlayGround.Enemy
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.tag == Tag.Shot)
+            if (other.tag == Tag.Shot && !Dead)
             {
                 ApplyDamage(other.GetComponent<Shot.Shot>().Damage);
                 shotFactory.ReturnShotToPool(other.gameObject);

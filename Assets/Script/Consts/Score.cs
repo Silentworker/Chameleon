@@ -2,7 +2,7 @@
 {
     public class Score
     {
-        public const int KillEnemy = 3;
-        public const int MissEnemy = -1;
+        public const int KillEnemy = 1;
+        public const int MissEnemy = -3;
     }
 }

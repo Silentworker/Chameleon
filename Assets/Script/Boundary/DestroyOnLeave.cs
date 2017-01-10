@@ -25,13 +25,13 @@ namespace Assets.Script.Boundary
             }
             else if (other.tag == Tag.Enemy)
             {
-                enemyFactory.ReturnToPool(other.gameObject);
-
                 Enemy enemyComponent = other.GetComponent<Enemy>();
                 if (!enemyComponent.Dead)
                 {
                     scoreManager.AddScore(Consts.Score.MissEnemy);
                 }
+
+                enemyFactory.ReturnToPool(other.gameObject);
             }
         }
     }

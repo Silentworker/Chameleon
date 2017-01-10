@@ -32,7 +32,7 @@ namespace Assets.Script.PlayGround.Shot
         private int _lasTouchID;
         private float _lastShotTime;
         private float _touchStartTime;
-        private float _lastClickTime;
+        private float _lastTouchTime;
         private ShotProgress _progress;
 
         void Start()
@@ -46,11 +46,11 @@ namespace Assets.Script.PlayGround.Shot
 
             if (Input.GetMouseButtonDown(0))
             {
-                _lastClickTime = Time.time;
+                _lastTouchTime = Time.time;
             }
             else if (Input.GetMouseButton(0))
             {
-                ShowProgress(Time.time - _lastClickTime);
+                ShowProgress(Time.time - _lastTouchTime);
             }
             else if (Input.GetMouseButtonUp(0))
             {
@@ -59,7 +59,7 @@ namespace Assets.Script.PlayGround.Shot
                 {
                     Vector3 mousePosition = Input.mousePosition;
                     mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                    SpawnShot(Time.time - _lastClickTime, new Vector2(mousePosition.x, mousePosition.y));
+                    SpawnShot(Time.time - _lastTouchTime, new Vector2(mousePosition.x, mousePosition.y));
                     _lastShotTime = Time.time;
                 }
             }
@@ -72,23 +72,22 @@ namespace Assets.Script.PlayGround.Shot
 
                 if (touch.phase == TouchPhase.Began)
                 {
-                    if (_lasTouchID != touch.fingerId)
-                    {
-                        _lasTouchID = touch.fingerId;
-                        _lastShotTime = Time.time;
-                    }
+                    _lastTouchTime = Time.time;
+                    _lasTouchID = touch.fingerId;
                 }
                 else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
                 {
-                    if (_lasTouchID == touch.fingerId)
+                    if (_lasTouchID == touch.fingerId && Time.time > _lastShotTime + ShotDelay)
                     {
-                        //SpawnShot(Time.time - _lastShotTime, position);   //todo 
+                        _progress.HideProgress();
+                        Vector3 position = Camera.main.ScreenToWorldPoint(touch.position);
+                        SpawnShot(Time.time - _lastTouchTime, position);
                         _lastShotTime = Time.time;
                     }
                 }
-                else
+                else if (_lasTouchID == touch.fingerId)
                 {
-                    ShowProgress(Time.time - _lastShotTime);
+                    ShowProgress(Time.time - _lastTouchTime);
                 }
             }
 #endif

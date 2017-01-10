@@ -71,19 +71,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Script\Consts\ShotType.cs" />
-    <Compile Include="Assets\Script\Consts\Damage.cs" />
-    <Compile Include="Assets\Script\PlayGround\Shot\Shot.cs" />
     <Compile Include="Assets\Script\ApplicationInit.cs" />
     <Compile Include="Assets\Script\ApplicationInstaller.cs" />
     <Compile Include="Assets\Script\Boundary\DestroyOnLeave.cs" />
     <Compile Include="Assets\Script\Chameleon\ChameleonController.cs" />
     <Compile Include="Assets\Script\Chameleon\IChameleonController.cs" />
+    <Compile Include="Assets\Script\Consts\Damage.cs" />
     <Compile Include="Assets\Script\Consts\Duration.cs" />
+    <Compile Include="Assets\Script\Consts\Score.cs" />
+    <Compile Include="Assets\Script\Consts\ShotType.cs" />
+    <Compile Include="Assets\Script\Consts\Tag.cs" />
     <Compile Include="Assets\Script\PlayGround\ConstantSpeedMoving.cs" />
+    <Compile Include="Assets\Script\PlayGround\Enemy\IEnemyFactory.cs" />
+    <Compile Include="Assets\Script\PlayGround\Enemy\EnemyFactory.cs" />
+    <Compile Include="Assets\Script\PlayGround\Enemy\Enemy.cs" />
     <Compile Include="Assets\Script\PlayGround\IPlayGroundController.cs" />
     <Compile Include="Assets\Script\PlayGround\PlayGroundController.cs" />
     <Compile Include="Assets\Script\PlayGround\Shot\IShotFactory.cs" />
+    <Compile Include="Assets\Script\PlayGround\Shot\Shot.cs" />
     <Compile Include="Assets\Script\PlayGround\Shot\ShotFactory.cs" />
     <Compile Include="Assets\Script\PlayGround\Shot\ShotProgress.cs" />
     <Compile Include="Assets\Script\Score\IScoreManager.cs" />

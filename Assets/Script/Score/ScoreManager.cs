@@ -26,10 +26,5 @@ namespace Assets.Script.Score
         {
             SetScore(_score + score);
         }
-
-        public void ReduceScore(int score)
-        {
-            SetScore(_score - score);
-        }
     }
 }

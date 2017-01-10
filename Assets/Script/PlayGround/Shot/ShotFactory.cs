@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Assets.Script.PlayGround.Shot
 {
-    public class ShotFactory : MonoBehaviour
+    public class ShotFactory : MonoBehaviour, IShotFactory
     {
         [Inject]
         private DiContainer container;
@@ -35,11 +35,6 @@ namespace Assets.Script.PlayGround.Shot
         private float _lastClickTime;
         private ShotProgress _progress;
 
-        public void ReturnShotToPool(GameObject shot)
-        {
-
-        }
-
         void Start()
         {
             _progress = GetComponent<ShotProgress>();
@@ -63,6 +58,7 @@ namespace Assets.Script.PlayGround.Shot
                 if (Time.time > _lastShotTime + ShotDelay)
                 {
                     Vector3 mousePosition = Input.mousePosition;
+                    mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
                     SpawnShot(Time.time - _lastClickTime, new Vector2(mousePosition.x, mousePosition.y));
                     _lastShotTime = Time.time;
                 }
@@ -98,9 +94,31 @@ namespace Assets.Script.PlayGround.Shot
 #endif
         }
 
+        public void ReturnShotToPool(GameObject shot)
+        {
+            if (shot.tag != Tag.Shot) return;
+
+            shot.SetActive(false);
+
+            byte shotType = shot.GetComponent<Shot>().Type;
+
+            switch (shotType)
+            {
+                case ShotType.Simple:
+                    _simpleShotPool.Add(shot);
+                    break;
+                case ShotType.Advanced:
+                    _anvancedShotPool.Add(shot);
+                    break;
+                case ShotType.Mega:
+                    _megaShotPool.Add(shot);
+                    break;
+            }
+        }
+
         private void SpawnShot(float progress, Vector2 position)
         {
-            Vector2 odds = position - MouthPoint.anchoredPosition;
+            Vector2 odds = position - new Vector2(MouthPoint.position.x, MouthPoint.position.y);
             float angle = Mathf.Atan2(odds.y, odds.x) * Mathf.Rad2Deg;
             angle = angle < 0 ? 0 : angle > 90 ? 90 : angle;
 
@@ -109,10 +127,8 @@ namespace Assets.Script.PlayGround.Shot
 
             GameObject prefab = null;
             List<GameObject> pool = null;
-            byte shotType = ShotType.Simple;
+            byte shotType;
             float damage = 0;
-            float maxAdvanceDamage = Damage.AdvancedMaxFactor * Damage.BaseShot;
-            float maxMegaDamage = Damage.MegaMaxFactor * Damage.BaseShot;
 
             if (progress < Duration.ShotBecameAdvanced)
             {
@@ -127,9 +143,12 @@ namespace Assets.Script.PlayGround.Shot
                 pool = _anvancedShotPool;
                 shotType = ShotType.Advanced;
 
-                //float advancedProgress =
-
-                damage = Damage.BaseShot;
+                damage = getDamageOnLineByTwoPoints(
+                    progress,
+                    Duration.ShotBecameAdvanced,
+                    Duration.ShotBecameMega,
+                    Damage.BaseShot,
+                    Damage.AdvancedShot);
             }
             else if (progress <= Duration.ShotTouchLimit)
             {
@@ -137,7 +156,16 @@ namespace Assets.Script.PlayGround.Shot
                 pool = _megaShotPool;
                 shotType = ShotType.Mega;
 
-                damage = Damage.BaseShot;
+                damage = getDamageOnLineByTwoPoints(
+                   progress,
+                   Duration.ShotBecameMega,
+                   Duration.ShotTouchLimit,
+                   Damage.AdvancedShot,
+                   Damage.MegaShot);
+            }
+            else
+            {
+                return;
             }
 
             GameObject shot;
@@ -156,12 +184,18 @@ namespace Assets.Script.PlayGround.Shot
             shotTransform.SetParent(Folder, false);
             shotTransform.position = MouthPoint.position;
             shotTransform.rotation = Quaternion.Euler(0, 0, angle);
+            shot.SetActive(true);
 
             Shot shotComponent = shot.GetComponent<Shot>();
             shotComponent.Damage = damage;
             shotComponent.Type = shotType;
 
             chameleonController.Attack(angle);
+        }
+
+        private float getDamageOnLineByTwoPoints(float time, float time1, float time2, float damage1, float damage2)
+        {
+            return -((damage1 - damage2) * time + (time1 * damage2 - time2 * damage1)) / (time2 - time1);
         }
 
         private void ShowProgress(float progress)
